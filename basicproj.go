@@ -10,25 +10,33 @@ func main(){
 
     fmt.Println(declare)
     
-    var str string = "frfr"
+    str  := "frfr"
     fmt.Println(str)
-
 
     fmt.Println(len(str))
 
     fmt.Println(utf8.RuneCountInString(str))
 
-    // var arr [3]int = [3]int{1, 2, 3}
-    // var sl []int = []int{1, 2, 3}
-    // var st struct { x int; y int } = struct { x int; y int }{1, 2}
-    //
-    // var p *int = &i
-    // var ch chan int = make(chan int)
-    // var m map[string]int = make(map[string]int)
-    // var iface interface{} = "text" 
-    //
-
     inf := "intferred type with short form"
     fmt.Println(inf)
 
+    new(str)
+
+    arr := [4]uint16{0,2,4,6}
+
+    fmt.Println(arr[2])
+    fmt.Println(arr[0:2])
+
+    newMap := map[string]uint32{"test":32,"news":42}
+
+    fmt.Println(newMap["news"])
+    first, second := newMap["rand"]
+    fmt.Println(first, second)
+//  maps will still return smth even if the key does not exist
+
+
+}
+
+func new(in string){
+    fmt.Println(in)
 }
