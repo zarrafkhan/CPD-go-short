@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
     "os"
-    // tea "github.com/charmbracelet/bubbletea"
 )
 
 
@@ -30,4 +29,13 @@ func fizzbuzz(i int) {
     } else {
     fmt.Print(" ",i)
     }
+}
+
+func isMT[T any](sl []T) bool{
+    return len(sl)==0
+}
+
+func sqrt[T int | float32 | float64](sl []T) T{
+    var sq T
+    return sq
 }
