@@ -1,42 +1,33 @@
 package main
 
-import "fmt"
-import "unicode/utf8"
+import (
+	"fmt"
+    "os"
+    // tea "github.com/charmbracelet/bubbletea"
+)
+
 
 func main(){
-    //date types
-    //int + float just like c frfr 
-    var declare uint32 = 34 //var name type
+    var n int
+    fmt.Scanf("%d",&n)
 
-    fmt.Println(declare)
-    
-    str  := "frfr"
-    fmt.Println(str)
+    i := 1
+    for i <= n{
+        fizzbuzz(i)
+        i++
+    }
 
-    fmt.Println(len(str))
-
-    fmt.Println(utf8.RuneCountInString(str))
-
-    inf := "intferred type with short form"
-    fmt.Println(inf)
-
-    new(str)
-
-    arr := [4]uint16{0,2,4,6}
-
-    fmt.Println(arr[2])
-    fmt.Println(arr[0:2])
-
-    newMap := map[string]uint32{"test":32,"news":42}
-
-    fmt.Println(newMap["news"])
-    first, second := newMap["rand"]
-    fmt.Println(first, second)
-//  maps will still return smth even if the key does not exist
-
-
+    os.Exit(0)
 }
 
-func new(in string){
-    fmt.Println(in)
+func fizzbuzz(i int) {
+    if i % 5 == 0 && i % 3 == 0 {
+        fmt.Print(" FizzBuzz")
+    } else if i % 3 == 0 {
+        fmt.Print(" Fizz")
+    } else if i % 5 == 0 {
+        fmt.Print(" Buzz")
+    } else {
+    fmt.Print(" ",i)
+    }
 }
