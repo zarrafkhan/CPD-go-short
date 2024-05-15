@@ -1,4 +1,4 @@
-package db
+package models
 
 import (
 	"log"
@@ -23,11 +23,11 @@ type Store interface {
 	GetShID(SH string) (*Url, error)
 }
 
-func Shorten(full string) Url {
+func Shorten(link string) Url {
 	return Url{
 		ID:   og,
 		SH:   sh,
-		OG:   full,
+		OG:   link,
 		Flag: true,
 	}
 }
