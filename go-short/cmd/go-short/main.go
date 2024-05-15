@@ -36,6 +36,7 @@ func main() {
 
 	r.GET("/", getURL)
 	r.Run("localhost:5050")
+	fmt.Println("https://localhost:5050")
 
 }
 
