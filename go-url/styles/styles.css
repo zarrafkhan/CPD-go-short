@@ -911,6 +911,10 @@ video {
   border-color: rgb(101 163 13);
 }
 
+.dark:bg-green {
+  background-color: rgb(101 163 13);
+}
+
 .underline-offset-4 {
   text-underline-offset: 4px;
 }
