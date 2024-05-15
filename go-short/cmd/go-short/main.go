@@ -1,73 +1,33 @@
 package main
 
 import (
+	"example/go-short/internals/db"
 	"fmt"
-	"html/template"
 	"log"
-	"net/http"
-	"net/url"
+	"os"
 
-	//"github.com/gin-gonic/gin"
-
-	"context"
-
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/joho/godotenv"
 )
 
-var temp *template.Template
-
-func init() {
-	temp = template.Must(template.ParseGlob("temps/index.html"))
+// loads .env
+func loadEnv() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 }
-
-func rootHandle(w http.ResponseWriter, r *http.Request) {
-	temp.ExecuteTemplate(w, "index.html", nil)
-}
-
-func printLocal() {
-	u, err := url.Parse("http://localhost:5050/")
-	Check(err)
-	fmt.Printf("%+v \n", u)
-}
-
-// func testShorten() {
-// 	l1 := models.Shorten("https://example.com/")
-// 	fmt.Println(l1.SH)
-// }
 
 func main() {
-	// printLocal()
+	loadEnv()
+	e := db.Init(os.Getenv("MONGO_KEY"), "cpd")
+	Check(e)
 
-	// http.HandleFunc("/", rootHandle)
-	// //serve css
-	// fileServer := http.FileServer(http.Dir("styles"))
-	// http.Handle("/styles/", http.StripPrefix("/styles", fileServer))
-	// http.ListenAndServe(":5050", nil)
+	fmt.Println("Mongo Bongo")
 
-	// Use the SetServerAPIOptions() method to set the version of the Stable API on the client
-	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	opts := options.Client().ApplyURI("mongodb+srv://testUser:OCMBJtQstHm9dhYr@cluster-go-short.c4w8kgt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-go-short").SetServerAPIOptions(serverAPI)
-
-	// Create a new client and connect to the server
-	client, err := mongo.Connect(context.TODO(), opts)
-	if err != nil {
-		panic(err)
-	}
-
+	//returns till main() returns smth
 	defer func() {
-		if err = client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
+		Check(db.Disc())
 	}()
-
-	// Send a ping to confirm a successful connection
-	if err := client.Database("admin").RunCommand(context.TODO(), bson.D{{"ping", 1}}).Err(); err != nil {
-		panic(err)
-	}
-	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
-
 }
 
 // handle error
