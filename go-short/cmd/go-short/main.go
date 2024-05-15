@@ -2,6 +2,8 @@ package main
 
 import (
 	"example/go-short/internals/db"
+	// "example/go-short/internals/models"
+
 	"fmt"
 	"html/template"
 	"log"

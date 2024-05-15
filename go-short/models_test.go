@@ -1,7 +1,7 @@
 package main
 
 import (
-	"example/go-short/models"
+	"example/go-short/internals/models"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

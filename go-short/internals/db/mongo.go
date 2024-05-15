@@ -1,3 +1,5 @@
+// DB interaction
+
 package db
 
 import (

@@ -1,3 +1,4 @@
+// business logic
 package models
 
 import (
