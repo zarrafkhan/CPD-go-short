@@ -9,7 +9,7 @@ import (
 var temp *template.Template
 
 func init() {
-	temp = template.Must(template.ParseGlob("temps/*.html"))
+	temp = template.Must(template.ParseGlob("temps/index.html"))
 }
 
 func rootHandle(w http.ResponseWriter, r *http.Request) {
