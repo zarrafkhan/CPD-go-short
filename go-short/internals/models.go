@@ -1,10 +1,9 @@
 // business logic
-package models
+package internals
 
 import (
-	"log"
-
 	uniqueid "github.com/albinj12/unique-id"
+	//"go.mongodb.org/mongo-driver/mongo"
 	// urlverifier "github.com/davidmytton/url-verifier"
 )
 
@@ -31,11 +30,5 @@ func Shorten(link string) Url {
 		SH:   sh,
 		OG:   link,
 		Flag: true,
-	}
-}
-
-func Check(err error) {
-	if err != nil {
-		log.Fatal(err)
 	}
 }

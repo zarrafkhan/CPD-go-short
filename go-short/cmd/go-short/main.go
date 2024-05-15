@@ -1,8 +1,7 @@
 package main
 
 import (
-	"example/go-short/internals/db"
-	// "example/go-short/internals/models"
+	i "example/go-short/internals"
 
 	"fmt"
 	"html/template"
@@ -40,14 +39,14 @@ func printLocal() {
 
 func main() {
 	loadEnv()
-	e := db.Init(os.Getenv("MONGO_KEY"), "cpd")
+	e := i.Init(os.Getenv("MONGO_KEY"), "cpd")
 	Check(e)
 
 	fmt.Println("Mongo Bongo")
 
 	//returns till main() returns smth
 	defer func() {
-		Check(db.Disc())
+		Check(i.Disc())
 	}()
 
 	printLocal()
@@ -63,6 +62,7 @@ func main() {
 // handle error
 func Check(err error) {
 	if err != nil {
+		log.Fatal(err)
 		log.Fatal(err)
 	}
 }

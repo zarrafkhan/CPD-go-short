@@ -1,6 +1,6 @@
 // DB interaction
 
-package db
+package internals
 
 import (
 	"context"
@@ -20,7 +20,7 @@ func Check(err error) {
 	}
 }
 
-func Init(mongoKey string, db string) error {
+func Init(mongoKey string, dbs string) error {
 	//creates mongo client
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().ApplyURI(mongoKey).SetServerAPIOptions(serverAPI)
