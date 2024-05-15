@@ -2,10 +2,13 @@ package main
 
 import (
 	"example/go-short/internals/db"
+	"example/go-short/models"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
@@ -28,6 +31,16 @@ func main() {
 	defer func() {
 		Check(db.Disc())
 	}()
+
+	r := gin.Default()
+
+	r.GET("/", getURL)
+	r.Run("localhost:5050")
+
+}
+
+func getURL(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, models.Shorten("https://example.com/"))
 }
 
 // handle error

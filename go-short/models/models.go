@@ -4,6 +4,7 @@ import (
 	"log"
 
 	uniqueid "github.com/albinj12/unique-id"
+	// urlverifier "github.com/davidmytton/url-verifier"
 )
 
 // ID gen
@@ -11,10 +12,10 @@ var og, _ = uniqueid.Generateid("a")
 var sh, _ = uniqueid.Generateid("a", 5)
 
 type Url struct {
-	ID   string
-	SH   string
-	OG   string
-	Flag bool
+	ID   string `json:"id"`
+	SH   string `json:"sh"`
+	OG   string `json:"og"`
+	Flag bool   `json:"flag"`
 }
 
 type Store interface {
