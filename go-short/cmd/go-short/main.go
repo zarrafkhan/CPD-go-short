@@ -2,13 +2,13 @@ package main
 
 import (
 	"example/go-short/internals/db"
-	"example/go-short/models"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
@@ -18,6 +18,22 @@ func loadEnv() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+}
+
+var temp *template.Template
+
+func init() {
+	temp = template.Must(template.ParseGlob("temps/index.html"))
+}
+
+func rootHandle(w http.ResponseWriter, r *http.Request) {
+	temp.ExecuteTemplate(w, "index.html", nil)
+}
+
+func printLocal() {
+	u, err := url.Parse("http://localhost:5050/")
+	Check(err)
+	fmt.Printf("%+v \n", u)
 }
 
 func main() {
@@ -32,16 +48,14 @@ func main() {
 		Check(db.Disc())
 	}()
 
-	r := gin.Default()
+	printLocal()
 
-	r.GET("/", getURL)
-	r.Run("localhost:5050")
-	fmt.Println("https://localhost:5050")
+	http.HandleFunc("/", rootHandle)
+	//serve css
+	fileServer := http.FileServer(http.Dir("styles"))
+	http.Handle("/styles/", http.StripPrefix("/styles", fileServer))
+	http.ListenAndServe(":5050", nil)
 
-}
-
-func getURL(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, models.Shorten("https://example.com/"))
 }
 
 // handle error
