@@ -138,3 +138,34 @@ func Check(err error) {
 // 	GetID(ID string) (*Link, error)
 // 	GetShID(ShortLink string) (*Link, error)
 // }
+
+//mongoclient
+
+// func (l *URLList) ReplaceLinksByID(url_id string, link *models.Url) (int32, error){
+// 	var links int32
+// 	res, e := l.Collection.InsertOne(context.Background(), link)
+// 	u.Check(e)
+// 	return links, nil
+
+// }
+
+// var client *mongo.Client
+
+// func Init(mongoKey string, dbs string) error {
+// 	//creates mongo client
+// 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+// 	opts := options.Client().ApplyURI(mongoKey).SetServerAPIOptions(serverAPI)
+// 	local, err := mongo.Connect(context.Background(), opts)
+// 	u.Check(err)
+
+// 	client = local
+
+// 	err = client.Database("admin").RunCommand(context.TODO(), bson.D{{Key: "ping", Value: 1}}).Err()
+// 	u.Check(err)
+
+// 	return err
+// }
+
+// func Disc() error {
+// 	return client.Disconnect(context.Background())
+// }
