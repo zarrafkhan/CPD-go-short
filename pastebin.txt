@@ -131,3 +131,10 @@ func Check(err error) {
 	}
 }
 
+//models.go
+
+// type Store interface {
+// 	SaveURL(Url Link) error
+// 	GetID(ID string) (*Link, error)
+// 	GetShID(ShortLink string) (*Link, error)
+// }
