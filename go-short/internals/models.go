@@ -1,14 +1,16 @@
 package internals
 
 import (
-	utils "example/go-short/internals/util"
+	"crypto/sha1"
+	"encoding/base64"
+	u "example/go-short/internals/util"
 
-	"fmt"
 	"time"
 
-	uid "github.com/albinj12/unique-id"
 	verify "github.com/davidmytton/url-verifier"
 )
+
+const prefix = "go-sh/"
 
 type Link struct {
 	ID        string        `json:"id,omitempty" bson: "id"`
@@ -16,16 +18,18 @@ type Link struct {
 	Exp       time.Duration `json: "exp" "bson: "exp"`
 }
 
-func ShortenLink(link string) string {
-	sh, _ := uid.Generateid("a", 5)
-	fmt.Println(sh)
-	return sh
+// using SHA1 to encode link into hash
+func EncodeSHA(s string) string {
+	h := sha1.New()
+	h.Write([]byte(s))
+	sha := base64.URLEncoding.EncodeToString(h.Sum(nil))[:5] //slice first 5
+	return sha
 }
 
 func SetLink(link string) Link {
 	return Link{
 		ID:        link,
-		ShortLink: ShortenLink(link),
+		ShortLink: EncodeSHA(link),
 	}
 }
 
@@ -34,7 +38,7 @@ func VerifyLink(link string) bool {
 	v := verify.NewVerifier()
 	v.EnableHTTPCheck()
 	ret, e := v.Verify(link)
-	utils.Check(e)
+	u.Check(e)
 
 	if ret.HTTP.IsSuccess {
 		check = true

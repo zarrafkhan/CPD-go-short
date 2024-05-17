@@ -1,11 +1,14 @@
 package main
 
-// d "example/go-short/db"
-// "testing"
+import (
+	"testing"
 
-// "github.com/stretchr/testify/assert"
+	i "example/go-short/internals"
 
-// func TestNewShort(t *testing.T) {
-// 	l1 := d.Shorten("https://example.com/")
-// 	assert.Equal(t, "https://example.com/", l1.OG)
-// }
+	"github.com/stretchr/testify/assert"
+)
+
+func TestShortenLink(t *testing.T) {
+	l1 := i.SetLink("https://example.com/")
+	assert.Equal(t, "https://example.com/", l1.ID)
+}
