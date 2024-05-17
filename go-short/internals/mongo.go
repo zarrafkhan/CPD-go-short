@@ -4,6 +4,7 @@ package internals
 
 import (
 	u "example/go-short/internals/util"
+	"log"
 	"os"
 
 	"context"
@@ -33,37 +34,36 @@ type URLList struct {
 }
 
 // client global var - this func just returns the collection
-func GetMongoColl(client *mongo.Client, name string, collName string) *mongo.Collection {
+func SetMongoColl(client *mongo.Client, name string, collName string) *mongo.Collection {
 	collection := client.Database(name).Collection(collName)
 
 	return collection
 }
 
-func (l *URLList) AddURL(link string) (interface{}, error) {
+func AddURL(l *mongo.Collection, link string) interface{} {
 	short := SetLink(link)
-	res, e := l.Collection.InsertOne(context.Background(), short)
+	res, e := l.InsertOne(context.Background(), short)
 	u.Check(e)
-	return res, nil
+
+	fmt.Println("Inserted a single document: ", res.InsertedID)
+	return short
 }
 
-func InsertURL(l *mongo.Collection, url string) string {
-	result := SetLink(url)
-	insertResult, err := l.InsertOne(context.TODO(), result)
-	u.Check(err)
-
-	fmt.Println("Inserted a single document: ", insertResult.InsertedID)
-	return result.ShortLink
-}
-
-func FindShortByLink(l *mongo.Collection, url_id string) (string, error) {
+func GetLinkFromShort(l *mongo.Collection, short string) (string, error) {
 	//convert mongo bson into struct type
 	var url Link
 
-	e := l.FindOne(context.Background(),
-		bson.D{{Key: "id", Value: "url_id"}}).Decode(&url)
-	u.Check(e)
+	// filter := bson.D{{Key: "shortlink", Value: short}}
+	filter := bson.M{"shortlink": short}
 
-	return url.ShortLink, nil
+	e := l.FindOne(context.Background(), filter).Decode(&url)
+
+	if e != nil {
+		log.Println("Decode error: ", e)
+	}
+
+	//return full url
+	return url.ID, nil
 }
 
 // returns DB close as error message
@@ -78,7 +78,7 @@ func SetupMongo() (*mongo.Client, *mongo.Collection) {
 	collName := os.Getenv("MONGO_COLL_NAME")
 
 	client := InitDB(mongoKey)
-	coll := GetMongoColl(client, name, collName)
+	coll := SetMongoColl(client, name, collName)
 
 	fmt.Println("Mongo Collection Bongo")
 

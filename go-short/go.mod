@@ -5,6 +5,7 @@ go 1.22.1
 require (
 	github.com/davidmytton/url-verifier v1.0.1
 	github.com/gorilla/mux v1.8.1
+	github.com/jaevor/go-nanoid v1.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.9.0
 	go.mongodb.org/mongo-driver v1.15.0
