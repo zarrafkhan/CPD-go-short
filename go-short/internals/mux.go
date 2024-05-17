@@ -8,8 +8,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const prefix = "go-sh/"
-
 var router = mux.NewRouter()
 var Client, collection = SetupMongo()
 
@@ -18,6 +16,7 @@ func Start_Server() int {
 	router.HandleFunc("/add/{url}", InsertURL_Server)
 	router.HandleFunc("/goto/{url}", GetURL_Server)
 	router.HandleFunc("/gets/{url}", GetURL_No_Redirect_Server)
+	router.HandleFunc("/delete/{url}", RemoveURL)
 
 	http.Handle("/", router)
 	port := ":" + os.Getenv("SERVER_PORT")
@@ -50,4 +49,11 @@ func GetURL_No_Redirect_Server(w http.ResponseWriter, r *http.Request) {
 	result = "https://" + result
 	fmt.Fprintf(w, "Original: %v\n", result)
 	fmt.Println(result)
+}
+
+func RemoveURL(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	fmt.Println(vars["url"])
+	err := DeletURL(collection, vars["url"])
+	fmt.Println(err)
 }

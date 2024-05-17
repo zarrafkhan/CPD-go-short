@@ -19,3 +19,8 @@ func TestFindURL(t *testing.T) {
 	f, _ := I.GetLinkFromShort(collection, "MFaJz")
 	assert.Equal(t, "www.google.com", f)
 }
+
+func TestDeleteURL(t *testing.T) {
+	f := I.DeletURL(collection, "www.google.com")
+	assert.Nil(t, f)
+}

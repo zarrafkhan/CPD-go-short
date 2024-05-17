@@ -6,14 +6,16 @@ import (
 	u "example/go-short/internals/util"
 	"log"
 	"os"
+	"time"
 
 	"context"
-	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+var mctx, cancel = context.WithTimeout(context.Background(), 30*time.Second)
 
 func InitDB(mongoKey string) *mongo.Client {
 	//creates mongo client
@@ -22,10 +24,9 @@ func InitDB(mongoKey string) *mongo.Client {
 	local, err := mongo.Connect(context.Background(), opts)
 	u.Check(err)
 
-	err = local.Database("admin").RunCommand(context.TODO(), bson.D{{Key: "ping", Value: 1}}).Err()
+	err = local.Database("admin").RunCommand(mctx, bson.D{{Key: "ping", Value: 1}}).Err()
 	u.Check(err)
 
-	fmt.Println("Mongo Bongo")
 	return local
 }
 
@@ -42,11 +43,14 @@ func SetMongoColl(client *mongo.Client, name string, collName string) *mongo.Col
 
 func AddURL(l *mongo.Collection, link string) interface{} {
 	short := SetLink(link)
-	res, e := l.InsertOne(context.Background(), short)
+	_, e := l.InsertOne(context.Background(), short)
 	u.Check(e)
-
-	fmt.Println("Inserted a single document: ", res.InsertedID)
 	return short
+}
+
+func DeletURL(l *mongo.Collection, link string) error {
+	filter := bson.M{"id": link}
+	return l.FindOneAndDelete(mctx, filter).Err()
 }
 
 func GetLinkFromShort(l *mongo.Collection, short string) (string, error) {
@@ -56,7 +60,7 @@ func GetLinkFromShort(l *mongo.Collection, short string) (string, error) {
 	// filter := bson.D{{Key: "shortlink", Value: short}}
 	filter := bson.M{"shortlink": short}
 
-	e := l.FindOne(context.Background(), filter).Decode(&url)
+	e := l.FindOne(mctx, filter).Decode(&url)
 
 	if e != nil {
 		log.Println("Decode error: ", e)
@@ -68,7 +72,7 @@ func GetLinkFromShort(l *mongo.Collection, short string) (string, error) {
 
 // returns DB close as error message
 func Disc(client *mongo.Client) error {
-	return client.Disconnect(context.Background())
+	return client.Disconnect(mctx)
 }
 
 func SetupMongo() (*mongo.Client, *mongo.Collection) {
@@ -76,11 +80,8 @@ func SetupMongo() (*mongo.Client, *mongo.Collection) {
 	mongoKey := os.Getenv("MONGO_KEY")
 	name := os.Getenv("MONGO_NAME")
 	collName := os.Getenv("MONGO_COLL_NAME")
-
 	client := InitDB(mongoKey)
 	coll := SetMongoColl(client, name, collName)
-
-	fmt.Println("Mongo Collection Bongo")
 
 	return client, coll
 }
