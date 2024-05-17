@@ -9,14 +9,14 @@ import (
 )
 
 var router = mux.NewRouter()
-var Client, collection = SetupMongo()
+var Client, Collection = SetupMongo()
 
 func Start_Server() int {
 
-	router.HandleFunc("/add/{url}", InsertURL_Server)
+	router.HandleFunc("/go-sh/{url}", InsertURL_Server)
 	router.HandleFunc("/goto/{url}", GetURL_Server)
 	router.HandleFunc("/gets/{url}", GetURL_No_Redirect_Server)
-	router.HandleFunc("/delete/{url}", RemoveURL)
+	router.HandleFunc("/rm/{url}", RemoveURL)
 
 	http.Handle("/", router)
 	port := ":" + os.Getenv("SERVER_PORT")
@@ -29,14 +29,14 @@ func Start_Server() int {
 func InsertURL_Server(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	fmt.Println(vars["url"])
-	result := AddURL(collection, vars["url"])
-	fmt.Fprintf(w, "URL: %v\n", result)
+	result := AddURL(Collection, vars["url"])
+	fmt.Fprintf(w, "Short: %v\n", result)
 }
 
 func GetURL_Server(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	fmt.Println(vars["url"])
-	result, _ := GetLinkFromShort(collection, vars["url"])
+	result, _ := GetLinkFromShort(Collection, vars["url"])
 	result = "https://" + result
 	http.Redirect(w, r, result, http.StatusSeeOther)
 	fmt.Println(result)
@@ -45,15 +45,15 @@ func GetURL_Server(w http.ResponseWriter, r *http.Request) {
 func GetURL_No_Redirect_Server(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	fmt.Println(vars["url"])
-	result, _ := GetLinkFromShort(collection, vars["url"])
+	result, _ := GetLinkFromShort(Collection, vars["url"])
 	result = "https://" + result
-	fmt.Fprintf(w, "Original: %v\n", result)
+	fmt.Fprintf(w, "Full Link: %v\n", result)
 	fmt.Println(result)
 }
 
 func RemoveURL(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	fmt.Println(vars["url"])
-	err := DeletURL(collection, vars["url"])
-	fmt.Println(err)
+	DeletURL(Collection, vars["url"])
+	fmt.Fprintf(w, "'%v' has been removed.\n", vars["url"])
 }

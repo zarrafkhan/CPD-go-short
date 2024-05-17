@@ -45,7 +45,7 @@ func AddURL(l *mongo.Collection, link string) interface{} {
 	short := SetLink(link)
 	_, e := l.InsertOne(context.Background(), short)
 	u.Check(e)
-	return short
+	return short.ShortLink
 }
 
 func DeletURL(l *mongo.Collection, link string) error {
