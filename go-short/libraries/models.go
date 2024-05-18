@@ -1,7 +1,7 @@
-package internals
+package libraries
 
 import (
-	u "example/go-short/internals/util"
+	u "example/go-short/libraries/util"
 
 	"time"
 

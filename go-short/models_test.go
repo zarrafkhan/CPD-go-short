@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	I "example/go-short/internals"
+	I "example/go-short/libraries"
 
 	"github.com/stretchr/testify/assert"
 )

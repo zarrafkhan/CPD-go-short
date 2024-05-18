@@ -1,9 +1,9 @@
 // DB interaction
 
-package internals
+package libraries
 
 import (
-	u "example/go-short/internals/util"
+	u "example/go-short/libraries/util"
 	"log"
 	"os"
 	"time"
@@ -35,8 +35,6 @@ type URLList struct {
 	Collection *mongo.Collection
 }
 
-var List []Link
-
 // client global var - this func just returns the collection
 func SetMongoColl(client *mongo.Client, name string, collName string) *mongo.Collection {
 	collection := client.Database(name).Collection(collName)
@@ -44,11 +42,11 @@ func SetMongoColl(client *mongo.Client, name string, collName string) *mongo.Col
 	return collection
 }
 
-func AddURL(l *mongo.Collection, link string) interface{} {
+func AddURL(l *mongo.Collection, link string) (string, string) {
 	short := SetLink(link)
 	_, e := l.InsertOne(context.Background(), short)
 	u.Check(e)
-	return short.ShortLink
+	return short.ID, short.ShortLink
 }
 
 func DeletURL(l *mongo.Collection, link string) error {

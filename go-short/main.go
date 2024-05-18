@@ -1,7 +1,7 @@
 package main
 
 import (
-	I "example/go-short/internals"
+	I "example/go-short/libraries"
 )
 
 func main() {
