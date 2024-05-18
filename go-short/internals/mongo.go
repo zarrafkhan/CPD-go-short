@@ -24,7 +24,8 @@ func InitDB(mongoKey string) *mongo.Client {
 	local, err := mongo.Connect(context.Background(), opts)
 	u.Check(err)
 
-	err = local.Database("admin").RunCommand(mctx, bson.D{{Key: "ping", Value: 1}}).Err()
+	//err = local.Database("admin").RunCommand(mctx, bson.D{{Key: "ping", Value: 1}}).Err()
+	err = local.Ping(context.TODO(), nil)
 	u.Check(err)
 
 	return local
@@ -33,6 +34,8 @@ func InitDB(mongoKey string) *mongo.Client {
 type URLList struct {
 	Collection *mongo.Collection
 }
+
+var List []Link
 
 // client global var - this func just returns the collection
 func SetMongoColl(client *mongo.Client, name string, collName string) *mongo.Collection {
