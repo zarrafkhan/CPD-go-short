@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
-var route = mux.NewRouter()
+var route = mux.NewRouter().StrictSlash(true).UseEncodedPath()
 var Client, Collection = SetupMongo()
-
 var temp *template.Template
 
 func init() {
@@ -31,22 +31,31 @@ func printLocal() {
 }
 
 func Start_Server() int {
-	route.HandleFunc("/go-sh/{url}", GetURL_Server)
-	route.HandleFunc("/get/{url}", GetURL_No_Redirect_Server)
-	route.HandleFunc("/rm/{url}", RemoveURL)
-	route.HandleFunc("/add/{url}", InsertURL_Server)
+
+	// route.HandleFunc("/go-sh/{url}", GetURL_Server)
+	// route.HandleFunc("/add/{url}", InsertURL_Server)
+	// route.HandleFunc("/get/{url}", GetURL_No_Redirect_Server)
+	// route.HandleFunc("/rm/{url}", RemoveURL)
 
 	printLocal()
 	utils.LoadEnv()
 
-	//serve css
+	//serve css stylesheet
 	fileServer := http.FileServer(http.Dir("styles"))
 	http.Handle("../styles/", http.StripPrefix("../styles", fileServer))
 
 	route.HandleFunc("/", rootHandle)
-	port := ":" + os.Getenv("SERVER_PORT")
 
-	if http.ListenAndServe(port, route) != nil {
+	srv := &http.Server{
+		Handler: route,
+		Addr:    "localhost:" + os.Getenv("SERVER_PORT"),
+
+		WriteTimeout: 30 * time.Second,
+		ReadTimeout:  30 * time.Second,
+	}
+
+	// serving error handle
+	if srv.ListenAndServe() != nil {
 		return -1
 	}
 	return 0
@@ -56,7 +65,6 @@ func InsertURL_Server(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	fmt.Println(vars["url"])
 	result := AddURL(Collection, vars["url"])
-	//fmt.Println(Collection)
 	fmt.Fprintf(w, "Short: %v\n", result)
 }
 
