@@ -4,6 +4,7 @@ package libraries
 
 import (
 	u "example/go-short/libraries/util"
+	utils "example/go-short/libraries/util"
 	"log"
 	"os"
 	"time"
@@ -15,7 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var mctx, cancel = context.WithTimeout(context.Background(), 30*time.Second)
+var mctx, _ = context.WithTimeout(context.Background(), 30*time.Second)
 
 func InitDB(mongoKey string) *mongo.Client {
 	//creates mongo client
@@ -49,6 +50,15 @@ func AddURL(l *mongo.Collection, link string) (string, string) {
 	return short.ID, short.ShortLink
 }
 
+func AddMulti(l *mongo.Collection, links []string) {
+	if len(links) > 0 {
+		for i := 0; i < len(links); i++ {
+			AddURL(l, links[i])
+		}
+	}
+
+}
+
 func DeletURL(l *mongo.Collection, link string) error {
 	filter := bson.M{"id": link}
 	return l.FindOneAndDelete(mctx, filter).Err()
@@ -69,6 +79,50 @@ func GetLinkFromShort(l *mongo.Collection, short string) (string, error) {
 
 	//return full url
 	return url.ID, nil
+}
+
+func CountDocs(l *mongo.Collection) (int64, error) {
+	opts := options.Count()
+	shorts, e := l.CountDocuments(context.TODO(), bson.D{}, opts)
+
+	if e != nil {
+		utils.Check(e)
+	}
+	return shorts, e
+}
+
+func GetShorts(l *mongo.Collection) []string {
+	var list []string
+	// Define the filter to find all documents
+	filter := bson.M{}
+
+	// Define the projection to only include the "ShortLink" field
+	projection := bson.M{"ShortLink": 1, "_id": 0}
+
+	// Find all documents with the specified filter and projection
+	cursor, err := l.Find(context.TODO(), filter, options.Find().SetProjection(projection))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cursor.Close(context.TODO())
+
+	// Iterate through the cursor and extract the "ShortLink" field values
+	for cursor.Next(context.TODO()) {
+		var result bson.M
+		if err = cursor.Decode(&result); err != nil {
+			log.Fatal(err)
+		}
+
+		if shortLink, ok := result["ShortLink"].(string); ok {
+			list = append(list, shortLink)
+		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return list
 }
 
 // returns DB close as error message

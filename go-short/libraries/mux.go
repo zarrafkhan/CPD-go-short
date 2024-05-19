@@ -11,9 +11,9 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// var route = mux.NewRouter()
 var Client, Collection = SetupMongo()
 var temp *template.Template
+var Count int64
 
 func init() {
 	temp = template.Must(template.ParseGlob("temps/index.html"))
@@ -33,15 +33,13 @@ func printLocal() {
 }
 
 func Start_Server() int {
-	router := httprouter.New()
-
-	printLocal()
 	utils.LoadEnv()
+	// setup router and serving css stylesheet
+	router := httprouter.New()
+	printLocal()
+	router.ServeFiles("/styles/*filepath", http.Dir("styles"))
 
-	//serve css stylesheet
-	fileServer := http.FileServer(http.Dir("styles"))
-	router.Handler(http.MethodGet, "/styles/", http.StripPrefix("/styles", fileServer))
-
+	//http handlers for redirecting
 	router.HandlerFunc(http.MethodGet, "/", rootHandle)
 	router.HandlerFunc(http.MethodPost, "/", HandleNewLinkSubmit)
 	router.HandlerFunc(http.MethodGet, "/gs/:short", HandleRedirect)
@@ -63,7 +61,9 @@ func HandleNewLinkSubmit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	full, sh := AddURL(Collection, urls)
-	fmt.Println(full, " ", sh)
+	Count, _ = CountDocs(Collection)
+
+	fmt.Println(full, " ", sh, "Count curr: ", Count)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 

@@ -169,3 +169,27 @@ func Check(err error) {
 // func Disc() error {
 // 	return client.Disconnect(context.Background())
 // }
+
+
+IMPORTANT!!!!!!!!!!!
+
+{{ if len .Count | eq 0 }}
+            <tr class="table-row">
+                <td
+                class="border dark:border-green border-green py-2 pl-4 text-center rounded-sm text-green">
+                No Entries
+                </td>
+            </tr>
+            {{ end }}
+            {{/* Iterate over the existing URL data */}}
+            {{ range .List }}
+            <tr>
+                <td
+                    class="border dark:border-green border-green py-2 pl-4 text-center rounded-sm text-green">
+                    <a href="localhost:8080/gs/{{ .ID }}" target="_blank"
+                        class="hover:underline underline-offset-4 decoration-2 decoration-blue-500 dark:decoration-slate-500">localhost:8080/gs/{{ .ShortLink }}</a>
+                </td>
+                
+            </tr>
+
+            {{ end }}
