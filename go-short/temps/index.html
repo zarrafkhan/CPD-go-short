@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go-Short</title>
+    <link href="../styles/styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="pb-6">
+
+        <header class="mx-auto my-auto lg:max-w-8xl lg:w-[70rem] w-full px-4 pt-6 mb-1">
+            <h1 class="text-4xl font-bold text-center mb-4 text-green">Go-Short</h1>
+        </header>
+
+        <div class="mx-auto my-auto lg:max-w-8xl lg:w-[70rem] w-full px-4 mt-6 mb-1">
+
+            <form action="/" method="post"
+                class="flex flex-col rounded-md border-2 border-green p-6 rounded-lg">
+                <div class="grow mb-1">
+                    <input name="links" id="links" placeholder="Enter link to get short" type="text" required
+                        class="w-full border-2 rounded-md py-2 px-3 transition ease-in-out delay-150 duration-200 dark:border-green">
+                </div>
+                <div class="flex justify-center">
+                    <input name="submit" type="submit" value="Get Short Link"
+                           class="cursor-pointer dark:text-white flex-none font-medium border-0 border-slate-600 shadow-md hover:shadow-none bg-green dark:bg-green w-32 mt-3 text-white px-4 py-4 text-sm uppercase rounded-md mx-auto">
+                </div>                
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="mx-auto my-auto lg:max-w-8xl lg:w-[70rem] w-full px-4 mt-3 mb-4">
+        <table id="shortened-links-table"
+            class="w-full table-fixed rounded-md border-separate border-spacing-2 border-2 dark:border-2 dark:border-green border-green dark:text-white text-white">
+            <thead>
+                <tr>
+                    <th
+                    class=" rounded-sm px-4 py-2 text-center dark:border-green dark:border-2 bg-green dark:bg-green dark:text-white text-white">
+                        Links</th>
+                    <th
+                        class=" rounded-sm px-4 py-2 text-center dark:border-green dark:border-2 bg-green dark:bg-green dark:text-white text-white">
+                        Short Links</th>
+                </tr>
+            </head>
+        </thead>
+         <tbody class="text-center">
+            
+        </tbody>
+    </table>
+    </div>
+</body>
+</html>
