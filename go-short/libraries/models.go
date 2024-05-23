@@ -3,16 +3,16 @@ package libraries
 import (
 	u "example/go-short/libraries/util"
 
-	"time"
+	// "time"
 
 	verify "github.com/davidmytton/url-verifier"
 	nano "github.com/jaevor/go-nanoid"
 )
 
 type Link struct {
-	ID        string        `bson:"id" json:"id,omitempty"`
-	ShortLink string        `bson:"shortlink" json:"shortlink,omitempty"`
-	Exp       time.Duration `bson:"exp" json:"exp,omitempty"`
+	ID        string `bson:"id" json:"id,omitempty"`
+	ShortLink string `bson:"shortlink" json:"shortlink,omitempty"`
+	// Exp       time.Duration `bson:"exp" json:"exp,omitempty"`
 }
 
 // using SHA1 to encode link into hash
@@ -42,7 +42,8 @@ func VerifyLink(link string) bool {
 	ret, e := v.Verify(link)
 	u.Check(e)
 
-	if ret.HTTP.IsSuccess {
+	//check if url && in http is reachable
+	if ret.IsURL && ret.HTTP.IsSuccess {
 		check = true
 	}
 

@@ -60,9 +60,13 @@ func HandleNewLinkSubmit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !VerifyLink(urls) {
+		fmt.Println("Please retry with a valid url")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+
 	full, sh := AddURL(Collection, urls)
 	Count, _ = CountDocs(Collection)
-
 	fmt.Println(full, " ", sh, "Count curr: ", Count)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

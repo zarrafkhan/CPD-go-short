@@ -44,9 +44,11 @@ func SetMongoColl(client *mongo.Client, name string, collName string) *mongo.Col
 }
 
 func AddURL(l *mongo.Collection, link string) (string, string) {
+
 	short := SetLink(link)
 	_, e := l.InsertOne(context.Background(), short)
 	u.Check(e)
+
 	return short.ID, short.ShortLink
 }
 
@@ -56,7 +58,6 @@ func AddMulti(l *mongo.Collection, links []string) {
 			AddURL(l, links[i])
 		}
 	}
-
 }
 
 func DeletURL(l *mongo.Collection, link string) error {
