@@ -4,7 +4,7 @@ package libraries
 
 import (
 	u "example/go-short/libraries/util"
-	utils "example/go-short/libraries/util"
+
 	"log"
 	"os"
 	"time"
@@ -87,41 +87,42 @@ func CountDocs(l *mongo.Collection) (int64, error) {
 	shorts, e := l.CountDocuments(context.TODO(), bson.D{}, opts)
 
 	if e != nil {
-		utils.Check(e)
+		u.Check(e)
 	}
 	return shorts, e
 }
 
-func GetShorts(l *mongo.Collection) []string {
-	var list []string
+func GetShorts(l *mongo.Collection) []Link {
+	var list []Link
 	// Define the filter to find all documents
-	filter := bson.M{}
+	findOptions := options.Find()
 
-	// Define the projection to only include the "ShortLink" field
-	projection := bson.M{"ShortLink": 1, "_id": 0}
-
-	// Find all documents with the specified filter and projection
-	cursor, err := l.Find(context.TODO(), filter, options.Find().SetProjection(projection))
+	cur, err := l.Find(mctx, bson.D{{}}, findOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer cursor.Close(context.TODO())
 
-	// Iterate through the cursor and extract the "ShortLink" field values
-	for cursor.Next(context.TODO()) {
-		var result bson.M
-		if err = cursor.Decode(&result); err != nil {
+	//Finding multiple documents returns a cursor
+	//Iterate through the cursor allows us to decode documents one at a time
+
+	for cur.Next(context.TODO()) {
+		//Create a value into which the single document can be decoded
+		var elem Link
+		err := cur.Decode(&elem)
+		if err != nil {
 			log.Fatal(err)
 		}
 
-		if shortLink, ok := result["ShortLink"].(string); ok {
-			list = append(list, shortLink)
-		}
+		list = append(list, elem)
+
 	}
 
-	if err = cursor.Err(); err != nil {
+	if err := cur.Err(); err != nil {
 		log.Fatal(err)
 	}
+
+	//Close the cursor once finished
+	cur.Close(context.TODO())
 
 	return list
 }
@@ -139,5 +140,6 @@ func SetupMongo() (*mongo.Client, *mongo.Collection) {
 	client := InitDB(mongoKey)
 	coll := SetMongoColl(client, name, collName)
 
+	//ctx, cancel := context.WithTimeout(context.Background(),10* time.Second)
 	return client, coll
 }

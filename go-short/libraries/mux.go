@@ -14,12 +14,14 @@ import (
 var Client, Collection = SetupMongo()
 var temp *template.Template
 var Count int64
+var ShortList, IDList []string
 
 func init() {
 	temp = template.Must(template.ParseGlob("temps/index.html"))
 }
 
 func rootHandle(w http.ResponseWriter, r *http.Request) {
+	//grab list off curr collection cursor
 	temp.ExecuteTemplate(w, "index.html", nil)
 }
 
@@ -44,6 +46,8 @@ func Start_Server() int {
 	router.HandlerFunc(http.MethodPost, "/", HandleNewLinkSubmit)
 	router.HandlerFunc(http.MethodGet, "/gs/:short", HandleRedirect)
 
+	GetList()
+
 	// serving error handle
 	if http.ListenAndServe(":8080", router) != nil {
 		return -1
@@ -67,7 +71,7 @@ func HandleNewLinkSubmit(w http.ResponseWriter, r *http.Request) {
 
 	full, sh := AddURL(Collection, urls)
 	Count, _ = CountDocs(Collection)
-	fmt.Println(full, " ", sh, "Count curr: ", Count)
+	fmt.Println(full, " ", sh)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -77,6 +81,24 @@ func HandleRedirect(w http.ResponseWriter, r *http.Request) {
 	result, _ := GetLinkFromShort(Collection, url)
 	http.Redirect(w, r, result, http.StatusSeeOther)
 	// println(url)
+}
+
+func RemoveURL(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	urls := r.Form.Get("links")
+	if urls == "" {
+		log.Fatal("Did not parse")
+		return
+	}
+	DeletURL(Collection, urls)
+	fmt.Fprintf(w, "'%v' has been removed.\n", urls)
+}
+
+func GetList() {
+	for _, l := range GetShorts(Collection) {
+		IDList = append(IDList, l.ID)
+		ShortList = append(ShortList, l.ShortLink)
+	}
 }
 
 // func InsertURL_Server(w http.ResponseWriter, r *http.Request) {
@@ -102,11 +124,4 @@ func HandleRedirect(w http.ResponseWriter, r *http.Request) {
 // 	result = "https://" + result
 // 	fmt.Fprintf(w, "Full Link: %v\n", result)
 // 	fmt.Println(result)
-// }
-
-// func RemoveURL(w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	fmt.Println(vars["url"])
-// 	DeletURL(Collection, vars["url"])
-// 	fmt.Fprintf(w, "'%v' has been removed.\n", vars["url"])
 // }

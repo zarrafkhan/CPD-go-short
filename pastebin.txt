@@ -193,3 +193,18 @@ IMPORTANT!!!!!!!!!!!
             </tr>
 
             {{ end }}
+
+
+{{range .IDList}}
+            <tr>
+                <th
+                class=" rounded-sm px-4 py-2 text-center dark:border-green dark:border-2 bg-green dark:bg-green dark:text-white text-white">
+                    <a class="table-cell lg:max-w-2xl" title="{{ .IDList }}">{{.IDList}}</a>
+                </th>
+                <th
+                    class=" rounded-sm px-4 py-2 text-center dark:border-green dark:border-2 bg-green dark:bg-green dark:text-white text-white">
+                    <a href="/gs?url={{ .ShortLinkList }}" target="_blank"
+                       class="hover:underline underline-offset-4 decoration-2 decoration-blue-500 dark:decoration-slate-500">
+                       {{.ShortLinkList }}</a>
+            </tr>
+
