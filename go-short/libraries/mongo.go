@@ -72,7 +72,7 @@ func GetLinkFromShort(l *mongo.Collection, short string) (string, error) {
 	// filter := bson.D{{Key: "shortlink", Value: short}}
 	filter := bson.M{"shortlink": short}
 
-	e := l.FindOne(mctx, filter).Decode(&url)
+	e := l.FindOne(context.TODO(), filter).Decode(&url)
 
 	if e != nil {
 		log.Println("Decode error: ", e)

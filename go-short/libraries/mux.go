@@ -79,8 +79,8 @@ func HandleRedirect(w http.ResponseWriter, r *http.Request) {
 	params := httprouter.ParamsFromContext(r.Context())
 	url := params.ByName("short")
 	result, _ := GetLinkFromShort(Collection, url)
+	println(result)
 	http.Redirect(w, r, result, http.StatusSeeOther)
-	// println(url)
 }
 
 func RemoveURL(w http.ResponseWriter, r *http.Request) {
