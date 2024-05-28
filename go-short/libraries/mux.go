@@ -1,28 +1,30 @@
 package libraries
 
 import (
+	"context"
 	utils "example/go-short/libraries/util"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
 
-var Client, Collection = SetupMongo()
-var temp *template.Template
-var Count int64
-var ShortList, IDList []string
+var (
+	Client, Collection = SetupMongo()
+	temp               *template.Template
+)
+
+type Row struct {
+	ShortList []string
+	IDList    []string
+}
 
 func init() {
 	temp = template.Must(template.ParseGlob("temps/index.html"))
-}
-
-func rootHandle(w http.ResponseWriter, r *http.Request) {
-	//grab list off curr collection cursor
-	temp.ExecuteTemplate(w, "index.html", nil)
 }
 
 func printLocal() {
@@ -34,8 +36,29 @@ func printLocal() {
 	fmt.Printf("%+v \n", u)
 }
 
+func rootHandle(w http.ResponseWriter, r *http.Request) {
+
+	var shorts, ogs []string
+
+	for _, l := range GetShorts(Collection) {
+		shorts = append(shorts, l.ShortLink)
+		ogs = append(ogs, l.ID)
+	}
+
+	data := Row{
+		ShortList: shorts,
+		IDList:    ogs,
+	}
+
+	err := temp.Execute(w, data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func Start_Server() int {
 	utils.LoadEnv()
+
 	// setup router and serving css stylesheet
 	router := httprouter.New()
 	printLocal()
@@ -46,9 +69,6 @@ func Start_Server() int {
 	router.HandlerFunc(http.MethodPost, "/", HandleNewLinkSubmit)
 	router.HandlerFunc(http.MethodGet, "/gs/:short", HandleRedirect)
 
-	GetList()
-
-	// serving error handle
 	if http.ListenAndServe(":8080", router) != nil {
 		return -1
 	}
@@ -69,9 +89,13 @@ func HandleNewLinkSubmit(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 
-	full, sh := AddURL(Collection, urls)
-	Count, _ = CountDocs(Collection)
+	//added context w/ timeout to ensure it handles cancellations for IO blocking operations
+	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
+	defer cancel()
+
+	full, sh := AddURL(Collection, urls, ctx)
 	fmt.Println(full, " ", sh)
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -94,12 +118,12 @@ func RemoveURL(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "'%v' has been removed.\n", urls)
 }
 
-func GetList() {
-	for _, l := range GetShorts(Collection) {
-		IDList = append(IDList, l.ID)
-		ShortList = append(ShortList, l.ShortLink)
-	}
-}
+// func GetList() {
+// 	for _, l := range GetShorts(Collection) {
+// 		IDList = append(IDList, l.ID)
+// 		ShortList = append(ShortList, l.ShortLink)
+// 	}
+// }
 
 // func InsertURL_Server(w http.ResponseWriter, r *http.Request) {
 // 	vars := mux.Vars(r)

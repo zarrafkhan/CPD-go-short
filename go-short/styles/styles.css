@@ -549,6 +549,11 @@ video {
   margin-right: auto;
 }
 
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -926,6 +931,27 @@ video {
 
 .caret-slate-700 {
   caret-color: #334155;
+}
+
+.th-truncate {
+  /* white-space: nowrap; */
+  overflow: hidden;
+  word-wrap: break-word;
+  max-width: 100%; /* Adjust the max-width as needed */
+  display: inline-block; /* Ensures the max-width is respected */
+  vertical-align: middle;
+}
+
+.th-wrap {
+  word-wrap: break-word;
+  max-width: 100%; /* Adjust the max-width as needed */
+}
+
+.longlinks {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }
 
 .shadow-md {
