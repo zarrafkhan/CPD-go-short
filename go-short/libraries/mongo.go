@@ -1,5 +1,7 @@
 // DB interaction
 
+// TESTED NEW TOPOLOGY
+
 package libraries
 
 import (
@@ -25,7 +27,6 @@ func InitDB(mongoKey string) *mongo.Client {
 	local, err := mongo.Connect(context.Background(), opts)
 	u.Check(err)
 
-	//err = local.Database("admin").RunCommand(mctx, bson.D{{Key: "ping", Value: 1}}).Err()
 	err = local.Ping(context.TODO(), nil)
 	u.Check(err)
 
@@ -43,22 +44,22 @@ func SetMongoColl(client *mongo.Client, name string, collName string) *mongo.Col
 	return collection
 }
 
-func AddURL(l *mongo.Collection, link string) (string, string) {
+func AddURL(l *mongo.Collection, link string, ctx context.Context) (string, string) {
 
 	short := SetLink(link)
-	_, e := l.InsertOne(context.Background(), short)
+	_, e := l.InsertOne(ctx, short)
 	u.Check(e)
 
 	return short.ID, short.ShortLink
 }
 
-func AddMulti(l *mongo.Collection, links []string) {
-	if len(links) > 0 {
-		for i := 0; i < len(links); i++ {
-			AddURL(l, links[i])
-		}
-	}
-}
+// func AddMulti(l *mongo.Collection, links []string) {
+// 	if len(links) > 0 {
+// 		for i := 0; i < len(links); i++ {
+// 			AddURL(l, links[i], con)
+// 		}
+// 	}
+// }
 
 func DeletURL(l *mongo.Collection, link string) error {
 	filter := bson.M{"id": link}
@@ -66,19 +67,15 @@ func DeletURL(l *mongo.Collection, link string) error {
 }
 
 func GetLinkFromShort(l *mongo.Collection, short string) (string, error) {
-	//convert mongo bson into struct type
+	//convert mongo bson into link struct type
 	var url Link
-
-	// filter := bson.D{{Key: "shortlink", Value: short}}
 	filter := bson.M{"shortlink": short}
 
 	e := l.FindOne(context.TODO(), filter).Decode(&url)
-
 	if e != nil {
 		log.Println("Decode error: ", e)
 	}
 
-	//return full url
 	return url.ID, nil
 }
 

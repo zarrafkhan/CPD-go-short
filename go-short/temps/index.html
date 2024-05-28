@@ -46,7 +46,16 @@
             </head>
         </thead>
          <tbody class="text-center">
-            
+            {{range $i, $l := .ShortList}}
+            <tr>
+                <th class=" rounded-sm px-4 py-2 text-center border dark:border-green dark:border-2 bg-white dark:bg-white text-green dark:text-green">
+                    <a class="longlinks" href="{{index $.IDList $i}}">{{index $.IDList $i}} </a> 
+                </th>
+                <th class=" rounded-sm px-4 py-2 text-center border dark:border-green dark:border-2 bg-white dark:bg-white text-green dark:text-green">
+                     <a href="http://localhost:8080/gs/{{$l}}">https://gs/{{$l}} </a>
+                </th>
+            </tr>
+            {{end}}
         </tbody>
     </table>
     </div>
