@@ -94,8 +94,9 @@ func HandleNewLinkSubmit(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
 	defer cancel()
 
-	full, sh := AddURL(Collection, urls, ctx)
-	fmt.Println(full, " ", sh)
+	full, sh, err := AddURL(Collection, urls, ctx)
+
+	fmt.Println(full, " ", sh, err)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

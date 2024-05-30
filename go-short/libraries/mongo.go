@@ -44,13 +44,15 @@ func SetMongoColl(client *mongo.Client, name string, collName string) *mongo.Col
 	return collection
 }
 
-func AddURL(l *mongo.Collection, link string, ctx context.Context) (string, string) {
+func AddURL(l *mongo.Collection, link string, ctx context.Context) (string, string, error) {
 
 	short := SetLink(link)
 	_, e := l.InsertOne(ctx, short)
-	u.Check(e)
+	if e != nil {
+		return "", "", e
+	}
 
-	return short.ID, short.ShortLink
+	return short.ID, short.ShortLink, nil
 }
 
 // func AddMulti(l *mongo.Collection, links []string) {
