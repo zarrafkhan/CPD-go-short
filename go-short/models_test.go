@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 
 	I "example/go-short/libraries"
@@ -23,4 +24,10 @@ func TestFindURL(t *testing.T) {
 func TestDeleteURL(t *testing.T) {
 	f := I.DeletURL(collection, "www.google.com")
 	assert.Nil(t, f)
+}
+
+func TestVerify(t *testing.T) {
+	l1 := I.VerifyLink("abc")
+	fmt.Println(l1)
+	assert.False(t, l1)
 }
