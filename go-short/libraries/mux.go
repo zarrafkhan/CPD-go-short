@@ -87,6 +87,7 @@ func HandleNewLinkSubmit(w http.ResponseWriter, r *http.Request) {
 	if !VerifyLink(urls) {
 		fmt.Println("Please retry with a valid url")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	//added context w/ timeout to ensure it handles cancellations for IO blocking operations
